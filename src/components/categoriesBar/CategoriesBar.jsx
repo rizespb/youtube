@@ -3,7 +3,7 @@ import './_categoriesBar.scss'
 import { keywords } from './CategoriesBar.data'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { getVideosByCategory } from '../../redux/actions/video.action'
+import { getPopularVideos, getVideosByCategory } from '../../redux/actions/video.action'
 
 const CategoriesBar = () => {
   const [activeCategory, setActiveCategory] = useState('All')
@@ -12,7 +12,8 @@ const CategoriesBar = () => {
 
   const handleCilck = (category) => {
     setActiveCategory(category)
-    disptach(getVideosByCategory(category))
+    if (category === 'All') disptach(getPopularVideos())
+    else disptach(getVideosByCategory(category))
   }
 
   return (

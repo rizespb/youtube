@@ -11,6 +11,7 @@ import LoginScreen from './screens/loginScreen/LoginScreen'
 
 import './_app.scss'
 import { useEffect } from 'react'
+import WatchScreen from './screens/watchScreen/WatchScreen'
 
 const Layout = ({ children }) => {
   // Показываем/скрываем sidebar на маленьких экранах
@@ -58,6 +59,12 @@ const App = () => {
       <Route path="/search">
         <Layout>
           <h1>Search results</h1>
+        </Layout>
+      </Route>
+
+      <Route path="/watch/:id">
+        <Layout>
+          <WatchScreen />
         </Layout>
       </Route>
 

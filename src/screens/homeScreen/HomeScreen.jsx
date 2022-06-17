@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import CategoriesBar from '../../components/categoriesBar'
 import Video from '../../components/video'
-import { getPopularVideos } from '../../redux/actions/video.action'
+import { getPopularVideos, getVideosByCategory, setLoading } from '../../redux/actions/video.action'
+import SkeletonVideo from '../../components/skeletons/SkeletonVideo'
 
 const HomeScreen = () => {
   const dispatch = useDispatch()
@@ -14,35 +15,40 @@ const HomeScreen = () => {
     dispatch(getPopularVideos())
   }, [dispatch])
 
-  const { videos } = useSelector((state) => state.homeVideos)
+  const { videos, activeCategory, loading } = useSelector((state) => state.homeVideos)
 
   // Функция для подгрузки видео при скролле вниз
   const fetchData = () => {
-    dispatch(getPopularVideos())
+    if (activeCategory === 'All') dispatch(getPopularVideos())
+    else dispatch(getVideosByCategory(activeCategory))
   }
 
   return (
     <Container>
       <CategoriesBar />
 
-      <Row>
-        {/* Порционная подгрузка видео при скролле вниз */}
-        <InfiniteScroll
-          dataLength={videos.length}
-          next={fetchData}
-          // По-нормальному, тут надо определять: есть еще видео для загрузки или закончились
-          hasMore={true}
-          loader={<div className="spinner-border text-danger d-block mx-auto"></div>}
-          className="row"
-        >
-          {videos.map((video) => (
-            // В некоторых запросах id видео - это строка, а в некоторых - объект
-            <Col lg={3} md={4} key={video.id?.videoId || video.id}>
-              <Video video={video} />
-            </Col>
-          ))}
-        </InfiniteScroll>
-      </Row>
+      {/* Порционная подгрузка видео при скролле вниз */}
+      <InfiniteScroll
+        dataLength={videos.length}
+        next={fetchData}
+        // По-нормальному, тут надо определять: есть еще видео для загрузки или закончились
+        hasMore={true}
+        loader={<div className="spinner-border text-danger d-block mx-auto"></div>}
+        className="row"
+      >
+        {!loading
+          ? videos.map((video, index) => (
+              // В некоторых запросах id видео - это строка, а в некоторых - объект
+              <Col lg={3} md={4} key={`${video.id?.videoId || video.id}-${index}`}>
+                <Video video={video} />
+              </Col>
+            ))
+          : [...new Array(20)].map((_, index) => (
+              <Col lg={3} md={4} key={index}>
+                <SkeletonVideo />
+              </Col>
+            ))}
+      </InfiniteScroll>
     </Container>
   )
 }

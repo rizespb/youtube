@@ -1,13 +1,21 @@
-import { HOME_VIDEOS_FAIL, HOME_VIDEOS_REQUEST, HOME_VIDEOS_SUCCESS } from '../actionTypes'
+import {
+  HOME_VIDEOS_FAIL,
+  HOME_VIDEOS_REQUEST,
+  HOME_VIDEOS_SUCCESS,
+  SELECTOR_VIDEO_FAIL,
+  SELECTOR_VIDEO_REQUEST,
+  SELECTOR_VIDEO_SUCCESS,
+} from '../actionTypes'
 
-const initialState = {
+const homeVideosInitialState = {
   videos: [],
   loading: false,
   nextPageToken: null,
   activeCategory: 'All',
 }
 
-export const homeVideosReducer = (state = initialState, action) => {
+// Обрабатываем видео на главной странице
+export const homeVideosReducer = (state = homeVideosInitialState, action) => {
   const { type, payload } = action
 
   switch (type) {
@@ -34,6 +42,42 @@ export const homeVideosReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
+      }
+
+    default:
+      return state
+  }
+}
+
+const selectedVideoInitialState = {
+  loading: true,
+  video: null,
+}
+
+// Обрабатываем видео на странице видео /watch/:{id}
+export const selectedVideoReducer = (state = selectedVideoInitialState, action) => {
+  const { type, payload } = action
+
+  switch (type) {
+    case SELECTOR_VIDEO_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      }
+
+    case SELECTOR_VIDEO_SUCCESS:
+      return {
+        ...state,
+        video: payload,
+        loading: false,
+      }
+
+    case SELECTOR_VIDEO_FAIL:
+      return {
+        ...state,
+        video: null,
+        loading: false,
+        error: payload,
       }
 
     default:
