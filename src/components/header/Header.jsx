@@ -5,13 +5,15 @@ import { AiOutlineSearch } from 'react-icons/ai'
 import { MdNotifications, MdApps } from 'react-icons/md'
 
 import './_header.scss'
+import { Link } from 'react-router-dom'
 
 const Header = ({ handleToggleSidebar }) => {
   return (
     <header className="header border border-dark">
       <FaBars className="header__menu" size={26} onClick={() => handleToggleSidebar()} />
-
-      <img src="https://pngimg.com/uploads/youtube/youtube_PNG2.png" alt="" className="header__logo" />
+      <Link to="/">
+        <img src="https://pngimg.com/uploads/youtube/youtube_PNG2.png" alt="" className="header__logo" />
+      </Link>
 
       <form>
         <input type="text" placeholder="Search" />
