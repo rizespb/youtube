@@ -12,7 +12,7 @@ export const login = () => async (dispatch) => {
     const provider = new GoogleAuthProvider()
 
     // https://developers.google.com/youtube/v3/guides/auth/installed-apps
-    // Возможно, эта строка добавляет возможность аккаунту Google "Просматривать, редактировать и безвозвратно удалять свои видео, рейтинги, комментарии и подписи на YouTube."
+    // Возможно, эта строка добавляет возможность аккаунту Google "Просматривать, редактировать и безвозвратно удалять свои видео, рейтинги, комментарии и подписи на YouTube." Закомментировал, т.к. Гугл иногда банит такие приложения
     // provider.addScope('https://www.googleapis.com/auth/youtube.force-ssl')
 
     const res = await signInWithPopup(auth, provider)

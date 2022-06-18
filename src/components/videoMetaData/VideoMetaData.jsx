@@ -1,5 +1,7 @@
 import React from 'react'
 import './_videoMetaData.scss'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import moment from 'moment'
 import numeral from 'numeral'
@@ -7,9 +9,27 @@ import numeral from 'numeral'
 import { MdThumbUp, MdThumbDown } from 'react-icons/md'
 import ShowMoreText from 'react-show-more-text'
 
+import { getChannelDetails, checkSubsciptionStatus } from '../../redux/actions/channel.action'
+
 const VideoMetaData = ({ video: { snippet, statistics }, videoId }) => {
   const { channelId, channelTitle, description, title, publishedAt } = snippet
   const { viewCount, likeCount } = statistics
+
+  const dispatch = useDispatch()
+
+  const { snippet: channelSnippet, statistics: channelStatistics } = useSelector(
+    (state) => state.channelDetails.channel
+  )
+
+  const { subscriptionStatus } = useSelector((state) => state.channelDetails)
+
+  useEffect(() => {
+    dispatch(getChannelDetails(channelId))
+
+    // Проверяем, подписан ли авторизованный юзер на канал
+    // Почему-то каждый раз приходит ответ Request had invalid authentication credentials.
+    dispatch(checkSubsciptionStatus(channelId))
+  }, [channelId, dispatch])
 
   return (
     <div className="videoMetaData py-2">
@@ -36,20 +56,18 @@ const VideoMetaData = ({ video: { snippet, statistics }, videoId }) => {
         </div>
       </div>
 
-      <div className="videoMetaData__channel d-flex justify-content-between align-items-center my-3 py-3">
+      <div className="videoMetaData__channel d-flex justify-content-between align-items-center my-2 py-3">
         <div className="d-flex">
-          <img
-            src="https://images.unsplash.com/photo-1593085512500-5d55148d6f0d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
-            alt="avatar"
-            className="rounded-circle me-3"
-          />
+          <img src={channelSnippet?.thumbnails?.default?.url} alt="avatar" className="rounded-circle me-3" />
           <div className="d-flex flex-column">
             <span>{channelTitle}</span>
             <span>{numeral(10000).format('0.a')} Subscribers</span>
           </div>
         </div>
 
-        <button className="btn border-0 p-2 m-2">Subscribe</button>
+        <button className={`btn border-0 p-2 m-2 ${subscriptionStatus && 'btn-gray'}`}>
+          {subscriptionStatus ? 'Subscribed' : 'Subscribe'}
+        </button>
       </div>
 
       <div className="videoMetaData__description">
